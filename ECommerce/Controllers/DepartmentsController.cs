@@ -51,8 +51,28 @@ namespace ECommerce.Controllers
             if (ModelState.IsValid)
             {
                 db.Departments.Add(departments);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    
+                    if(ex.InnerException != null && 
+                    ex.InnerException.InnerException != null && 
+                    ex.InnerException.InnerException.Message.Contains("_index"))
+                    {
+                        ModelState.AddModelError(string.Empty, "Is not possible create the department because it is duplicated!");
+                    }
+                    else
+                    {
+                         ModelState.AddModelError(string.Empty, "Error here");
+                
+                    }
+                    //throw;
+                    return View(departments);
+                }
             }
 
             return View(departments);
@@ -83,8 +103,28 @@ namespace ECommerce.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(departments).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    
+                    if(ex.InnerException != null && 
+                    ex.InnerException.InnerException != null && 
+                    ex.InnerException.InnerException.Message.Contains("_index"))
+                    {
+                        ModelState.AddModelError(string.Empty, "Is not possible edit the department because it is duplicated!");
+                    }
+                    else
+                    {
+                         ModelState.AddModelError(string.Empty, "Error here");
+                
+                    }
+                    //throw;
+                    return View(departments);
+                }
             }
             return View(departments);
         }
@@ -111,8 +151,27 @@ namespace ECommerce.Controllers
         {
             Departments departments = db.Departments.Find(id);
             db.Departments.Remove(departments);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                if(ex.InnerException != null && 
+                    ex.InnerException.InnerException != null && 
+                    ex.InnerException.InnerException.Message.Contains("REFERENCE"))
+                {
+                    ModelState.AddModelError(string.Empty, "Is not possible remove the department because there are cities related to it!");
+                }
+                else
+                {
+                     ModelState.AddModelError(string.Empty, "Error here");
+                
+                }
+                //throw;
+                return View(departments);
+            }
         }
 
         protected override void Dispose(bool disposing)
