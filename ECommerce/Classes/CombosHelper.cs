@@ -24,6 +24,22 @@ namespace ECommerce.Classes
 
             return dep;
         }
+
+
+        public static List<City> GetCities()
+        {
+
+            //Extructure to show the departments ordered
+            var cit = db.Cities.ToList();
+            cit.Add(new City
+            {
+                CityId = 0,
+                Name = "[ Select a city ]"
+            });
+            cit = cit.OrderBy(c => c.Name).ToList();
+
+            return cit;
+        }
         
         public void Dispose()
         {
