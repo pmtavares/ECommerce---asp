@@ -50,7 +50,10 @@
             @Html.DisplayFor(modelItem => item.Address)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Logo)
+            @if(!string.IsNullOrEmpty(item.Logo))
+            {
+                <img src="@Url.Content(item.Logo)" alt="Image" style="width:60px;height:80px;max-width:80%;height:20%; " />
+            }
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.CompanyId }) |

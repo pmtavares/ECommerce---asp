@@ -15,6 +15,7 @@ namespace ECommerce.Controllers
     {
         private EcommerceContext db = new EcommerceContext();
 
+        
 
         //Function to list cities in cascade
         public JsonResult GetCities(int departmentId)
@@ -59,12 +60,35 @@ namespace ECommerce.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CompanyId,Name,Phone,Address,Logo,DepartmentsId,CityId")] Company company)
+        public ActionResult Create(Company company)
         {
             if (ModelState.IsValid)
             {
+                var pic = string.Empty;
+                var folder = "~/Content/logos";
+                
+
                 db.Companies.Add(company);
                 db.SaveChanges();
+
+
+                var file = string.Format("{0}.jpg", company.CompanyId);
+
+                if (company.LogoFile != null)
+                {
+                    var response = FilesHelper.uploadPhoto(company.LogoFile, folder, file);
+                    if (response)
+                    {
+                        pic = string.Format("{0}/{1}", folder, file);
+                        company.Logo = pic;
+                        
+                    }
+
+
+                }
+                db.Entry(company).State = EntityState.Modified; //modified. To save on DB
+                db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -95,10 +119,32 @@ namespace ECommerce.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CompanyId,Name,Phone,Address,Logo,DepartmentsId,CityId")] Company company)
+        public ActionResult Edit(Company company)
         {
             if (ModelState.IsValid)
             {
+
+                //Image uploaded edit
+                var pic = string.Empty;
+                var folder = "~/Content/logos";
+                var file = string.Format("{0}.jpg", company.CompanyId);
+
+                if (company.LogoFile != null)
+                {
+                    var response = FilesHelper.uploadPhoto(company.LogoFile, folder, file);
+                    if (response)
+                    {
+                        pic = string.Format("{0}/{1}", folder, file);
+                        company.Logo = pic;
+                        
+                    }
+
+
+                }
+
+                //company.Logo = pic;
+
+
                 db.Entry(company).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
