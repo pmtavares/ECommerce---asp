@@ -40,6 +40,21 @@ namespace ECommerce.Classes
 
             return cit;
         }
+
+        public static List<Company> GetCompanies()
+        {
+
+            //Extructure to show the departments ordered
+            var comp = db.Companies.ToList();
+            comp.Add(new Company
+            {
+                CompanyId = 0,
+                Name = "[ Select a company ]"
+            });
+            comp = comp.OrderBy(c => c.Name).ToList();
+
+            return comp;
+        }
         
         public void Dispose()
         {
